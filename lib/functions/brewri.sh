@@ -1,0 +1,5 @@
+brewri() {
+ brew -v reinstall $@ 
+
+
+}

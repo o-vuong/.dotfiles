@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+# Dotfiles Configuration Script (v0.2.468) - <https://dotfiles.io>
+# Created in London, UK by Sebastien Rousseau
+# Copyright (c) 2025. All rights reserved.
+# License: MIT
+
+# Set environment variables
+HOSTNAME=$(hostname -f)                  # Hostname of the machine.
+INPUTRC=${HOME}/.inputrc                 # Path for .inputrc to ensure it's respected.
+OS_ARCH=$(uname -m)                      # Hardware name of the machine.
+OS_NAME=$(uname)                         # Operating system name.
+OS_VERSION=$(uname -r)                   # Operating system version number.
+SSL_CERT_FILE=${HOME}/cacert.pem         # SSL certificate file location.
+USER=$(whoami)                           # Current user name.
+
+# Export environment variables as defined in your instructions
+export HOSTNAME=${HOSTNAME}              # Export the hostname.
+export INPUTRC=${INPUTRC}                # Export the .inputrc path.
+export OS_ARCH="-arch ${OS_ARCH}"        # Export machine hardware name as architecture flag.
+export OS_NAME                           # Export operating system name.
+export OS_VERSION                        # Export operating system version number.
+export SSL_CERT_FILE=${SSL_CERT_FILE}    # Export the SSL certificate file path.
+export TERM=xterm-256color               # Export default terminal color scheme.
+
+# Load dotfiles
+export DOTFILES="${HOME}/.dotfiles/lib"  # Path to the cross-platform dotfiles library.
+for loaders in "${DOTFILES}"/*.sh; do
+  . "${loaders}"
+done
+
+# Zsh configuration settings
+typeset -aU path                         # Remove duplicates in zsh $PATH
+autoload -Uz compinit                    # Initialize the completion system
+autoload -Uz colors && colors            # Enable colors in prompt
+unsetopt correct_all                     # Disable autocorrect
+
+# Load NVM, Node Version Manager
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads NVM
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads NVM bash_completion
+
+# User configuration and aliases
+alias zshconfig="nano ~/.zshrc"
+alias ohmyzsh="nano ~/.oh-my-zsh"
+source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Neofetch to display system info at start
+neofetch
+
+# Fuzzy finder configuration
+eval "$(fzf --zsh)"
+
+# Fast Node Manager
+eval "$(fnm env --use-on-cd)"
+
+# Pyenv configuration
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+# TheFuck command correction tool
+eval $(thefuck --alias)
+
+# PNPM configuration
+export PNPM_HOME="/Users/oscar/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
