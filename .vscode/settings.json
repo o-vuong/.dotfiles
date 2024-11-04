@@ -1,0 +1,8 @@
+{
+  "editor.tabCompletion": "on",
+  "diffEditor.codeLens": true,
+  "debug.javascript.defaultRuntimeExecutable": {
+    "pwa-node": "/Users/oscar/.local/share/mise/shims/node"
+  },
+  "python.defaultInterpreterPath": "/Users/oscar/.local/share/mise/shims/python"
+}
