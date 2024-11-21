@@ -1,51 +1,75 @@
-#!/usr/bin/env bash
-# 🅳🅾🆃🅵🅸🅻🅴🆂 (v0.2.468) - <https://dotfiles.io>
-# Made with ♥ in London, UK by @sebastienrousseau
-# Copyright (c) 2015-2024. All rights reserved
-# License: MIT
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
-## 🆅🅰🆁🅸🅰🅱🅻🅴🆂 - Set Dotfiles variable.
-HOSTNAME=$(hostname -f)                 # hostname of the machine.
-INPUTRC=${HOME}/.inputrc                # set INPUTRC (so that .inputrc is respected)
-OS_ARCH=$(uname -m)                     # machine hardware name.
-OS_NAME=$(uname)                        # operating system name.
-OS_VERSION=$(uname -r)                  # operating system version number.
-SSL_CERT_FILE="/Users/oscar/.dotfiles/configurations/curl/cacert.pem"       # set the SSL_CERT_FILE environment variable.
-USER_LANGUAGE="en_GB.UTF-8"             # default language.
-# USER=$(whoami)                        # current user name.
+# .zshrc - Simplified Zsh configuration
 
-## 🅴🆇🅿🅾🆁🆃🆂 - Export the variables.
-export ARCHFLAGS="-arch ${OS_ARCH}"     # archflags for the current machine.
-export DOTFILES_VERSION='0.2.468'       # version of the dotfiles.
-export DOTFILES="${HOME}"/.dotfiles/ # path to the cross plaform dotfiles.
-export HOSTNAME=${HOSTNAME}             # hostname of the machine.
-export INPUTRC=${INPUTRC}               # set INPUTRC (so that .inputrc is respected)
-export LANG=${USER_LANGUAGE}            # default language.
-export LANGUAGE=${USER_LANGUAGE}        # default language.
-export LC_ALL=${USER_LANGUAGE}          # default language.
-export LC_CTYPE=${USER_LANGUAGE}        # default language.
-export OS_ARCH                          # machine hardware name.
-export OS_NAME                          # operating system name.
-export OS_VERSION                       # operating system version number.
-export SSL_CERT_FILE=${SSL_CERT_FILE}   # set the SSL_CERT_FILE environment variable.
-export TERM=xterm-256color              # default terminal color.
-# export USER                             # current user name.
+# Set environment variables
+export DOTFILES="$HOME/.dotfiles/lib"
+export PYENV_ROOT="$HOME/.pyenv"
+export PNPM_HOME="$HOME/Library/pnpm"
+export PATH="$PYENV_ROOT/bin:$PNPM_HOME:/opt/homebrew/opt/openssl@1.1/bin:/opt/homebrew/opt/flex/bin:/opt/homebrew/opt/bison/bin:/opt/homebrew/opt/libpcap/bin:$PATH"
 
-## 🅻🅾🅰🅳🅴🆁🆂 - Load the dotfiles.
-for loaders in "${DOTFILES}"/*.sh; do
-  # shellcheck source=/dev/null
-  . "${loaders}"
-done
+# Load dotfiles (if directory exists)
+if [[ -d "$DOTFILES" ]]; then
+  for loader in "$DOTFILES"/*.sh; do
+    source "$loader"
+  done
+fi
 
-# Remove duplicates in zsh $PATH
-# shellcheck disable=SC2034
+# Zsh configuration settings
 typeset -aU path
+autoload -Uz compinit && compinit     # Initialize completion system
+autoload -Uz colors && colors         # Enable color support
+unsetopt correct_all                  # Disable autocorrect to avoid delays
 
-# Initialize the completion system
-autoload -Uz compinit
+# Initialize pyenv
+if command -v pyenv >/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
 
-# Enable colors in prompt
-autoload -Uz colors && colors
+# Load Powerlevel10k theme
+if [[ -f /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme ]]; then
+  source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
+fi
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-# Starting to find autocorrect rather annoying...
-unsetopt correct_all
+# Fuzzy finder - fzf
+if command -v fzf >/dev/null 2>&1; then
+  source "$(brew --prefix)/opt/fzf/shell/completion.zsh"
+  source "$(brew --prefix)/opt/fzf/shell/key-bindings.zsh"
+fi
+
+# Load custom completions
+[[ -f ~/.zsh_completions ]] && source ~/.zsh_completions
+
+# Homebrew command-not-found handler
+HB_CNF_HANDLER="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
+[[ -f "$HB_CNF_HANDLER" ]] && source "$HB_CNF_HANDLER"
+
+# Aliases
+alias zshconfig="nano ~/.zshrc"
+alias ohmyzsh="nano ~/.oh-my-zsh"
+
+# Enable 'thefuck' to trigger on pressing Esc twice
+autoload -U expand-or-complete
+zle -N trigger_thefuck
+bindkey -M emacs '\e\e' trigger_thefuck
+bindkey -M viins '\e\e' trigger_thefuck
+trigger_thefuck() {
+  BUFFER="fuck"
+  zle accept-line
+}
+
+# Load PNPM (for Zsh only)
+if [[ "$SHELL" == "/bin/zsh" ]]; then
+  export PATH="$PNPM_HOME:$PATH"
+fi
+
+# Display system info using fastfetch
+if command -v fastfetch >/dev/null 2>&1; then
+  fastfetch
+fi
