@@ -12,22 +12,53 @@
 ################################################################################
 
 ## 🅲🅾🅽🅵🅸🅶🆄🆁🅰🆃🅸🅾🅽🆂
-# Function: load_custom_paths
-#
-# Description:
-#   Loads custom shell paths from the specified directory.
-#
-# Arguments:
-#   None
-#
-# Further Reading:
-#   ShellCheck Documentation: https://github.com/koalaman/shellcheck
+# Source constants
+source "${HOME}/.dotfiles/lib/constants.sh"
 
-load_custom_paths() {
-  for config in "${HOME}"/.dotfiles/paths/[!.#]*/*.sh; do
-    # shellcheck source=/dev/null
-    source "${config}"
-  done
+# Function to check if a directory exists in PATH
+path_contains() {
+    local dir="$1"
+    [[ ":$PATH:" == *":$dir:"* ]]
 }
 
+# Function to add a directory to PATH if it exists and isn't already included
+add_to_path() {
+    local dir="$1"
+    local prepend="${2:-false}"
+    
+    if [[ -d "$dir" ]] && ! path_contains "$dir"; then
+        if [[ "$prepend" == "true" ]]; then
+            export PATH="$dir:$PATH"
+        else
+            export PATH="$PATH:$dir"
+        fi
+    fi
+}
+
+# Function to load custom paths with error handling
+load_custom_paths() {
+    local path_dir="${DOTFILES_PATHS}"
+    local count=0
+    local errors=0
+
+    if [[ ! -d "${path_dir}" ]]; then
+        echo "Warning: ${path_dir} does not exist"
+        return 1
+    fi
+
+    for config in "${path_dir}"/*/**.sh; do
+        if [[ -f "${config}" ]]; then
+            if source "${config}"; then
+                ((count++))
+            else
+                echo "Error loading ${config}"
+                ((errors++))
+            fi
+        fi
+    done
+
+    echo "Loaded ${count} path configurations (${errors} errors)"
+}
+
+# Initialize paths
 load_custom_paths

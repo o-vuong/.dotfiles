@@ -1,4 +1,4 @@
 brewup() {
-  brew update -v && 
-  brew upgrade -v --greedy
-  }
+  brew update -v &&
+    brew upgrade -v --greedy
+}

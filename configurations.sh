@@ -24,10 +24,10 @@
 #   ShellCheck Documentation: https://github.com/koalaman/shellcheck
 
 load_custom_configurations() {
-  for config in "${HOME}"/.dotfiles/configurations/[!.#]*/*.sh; do
-    # shellcheck source=/dev/null
-    source "${config}"
-  done
+	for config in "${HOME}"/.dotfiles/configurations/[!.#]*/*.sh; do
+		# shellcheck source=/dev/null
+		source "${config}"
+	done
 }
 
 load_custom_configurations

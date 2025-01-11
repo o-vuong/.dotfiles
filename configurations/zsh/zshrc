@@ -7,6 +7,14 @@ fi
 
 # .zshrc - Simplified Zsh configuration
 
+
+  if type brew &>/dev/null; then
+    FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+
+    autoload -Uz compinit
+    compinit
+  fi
+
 # Set environment variables
 export DOTFILES="$HOME/.dotfiles/lib"
 export PYENV_ROOT="$HOME/.pyenv"
@@ -51,8 +59,8 @@ HB_CNF_HANDLER="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-command
 [[ -f "$HB_CNF_HANDLER" ]] && source "$HB_CNF_HANDLER"
 
 # Aliases
-alias zshconfig="nano ~/.zshrc"
-alias ohmyzsh="nano ~/.oh-my-zsh"
+alias zshconfig="micro ~/.zshrc"
+alias ohmyzsh="micro ~/.oh-my-zsh"
 
 # Enable 'thefuck' to trigger on pressing Esc twice
 autoload -U expand-or-complete
@@ -73,3 +81,4 @@ fi
 if command -v fastfetch >/dev/null 2>&1; then
   fastfetch
 fi
+

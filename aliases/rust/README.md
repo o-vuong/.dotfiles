@@ -17,7 +17,7 @@ Simply designed to fit your shell life 🐚
 
 ## 🆁🆄🆂🆃🆄🅿 🅰🅽🅳 🅲🅰🆁🅶🅾 🅰🅻🅸🅰🆂🅴🆂
 
-This code provides a set of aliases for the  `rustup`  and  `cargo`
+This code provides a set of aliases for the `rustup` and `cargo`
 commands.
 
 - `cg` Cargo shortcut.

@@ -132,7 +132,7 @@ This is a collection of aliases for the
 - `hkcicg` Get a CI config var
 - `hkcics` Set CI config vars
 - `hkcicu` Unset CI config vars
-- `hkcicv`  Display CI config vars
+- `hkcicv` Display CI config vars
 - `hkcid` Opens an interactive test debugging session with the contents
   of the current directory
 - `hkcie` Looks for the most recent run and returns the output of that

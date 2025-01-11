@@ -23,8 +23,8 @@ macOS and Linux.
 ### macOS
 
 - `upd` updates macOS software, Homebrew packages, Homebrew Casks, Mac
-   App Store apps, Rust stable toolchain, Ruby gems, Python packages,
-   and Node.js packages.
+  App Store apps, Rust stable toolchain, Ruby gems, Python packages,
+  and Node.js packages.
 
 ### Linux
 

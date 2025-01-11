@@ -11,7 +11,7 @@
   "freeze": true,
   "immed": true,
   "indent": 2,
-  "iterator":true,
+  "iterator": true,
   "lastsemic": true,
   "latedef": true,
   "maxcomplexity": 5,

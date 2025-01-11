@@ -16,12 +16,12 @@
 # 🅰🆁🅲🅷🅸🆅🅴🆂 🅰🅻🅸🅰🆂🅴🆂
 
 ## Check for existence of archive programs
-if type 7z &> /dev/null; then
+if type 7z &>/dev/null; then
   alias compress_7z='7z a'
   alias extract_7z='7z x'
 fi
 
-if type tar &> /dev/null; then
+if type tar &>/dev/null; then
   alias compress_tar='tar -cvf'
   alias extract_tar='tar -xvf'
   alias compress_tar_gzip='tar -zcvf'
@@ -30,47 +30,47 @@ if type tar &> /dev/null; then
   alias extract_tar_bzip2='tar -xvjf'
 fi
 
-if type jar &> /dev/null; then
+if type jar &>/dev/null; then
   alias compress_jar='jar -cvf'
   alias extract_jar='jar -xvf'
 fi
 
-if type xz &> /dev/null; then
+if type xz &>/dev/null; then
   alias compress_xz='tar -cvJf'
   alias extract_xz='tar -xvJf'
 fi
 
-if type zip &> /dev/null; then
+if type zip &>/dev/null; then
   alias compress_zip='zip -r'
   alias extract_zip='unzip'
 fi
 
-if type zstd &> /dev/null; then
+if type zstd &>/dev/null; then
   alias compress_zstd='zstd -zcvf'
   alias extract_zstd='zstd -zxvf'
 fi
 
-if type gzip &> /dev/null; then
+if type gzip &>/dev/null; then
   alias compress_gzip='gzip -cv'
   alias extract_gzip='gzip -dv'
 fi
 
-if type bzip2 &> /dev/null; then
+if type bzip2 &>/dev/null; then
   alias compress_bzip2='bzip2 -zkvf'
   alias extract_bzip2='bzip2 -dkvf'
 fi
 
-if type lzop &> /dev/null; then
+if type lzop &>/dev/null; then
   alias compress_lzop='lzop -cv'
   alias extract_lzop='lzop -dv'
 fi
 
-if type lz4 &> /dev/null; then
+if type lz4 &>/dev/null; then
   alias compress_lz4='lz4 -zcv'
   alias extract_lz4='lz4 -dcv'
 fi
 
-if type pigz &> /dev/null; then
+if type pigz &>/dev/null; then
   alias compress_pigz='pigz -zkvf'
   alias extract_pigz='pigz -dkvf'
 fi
@@ -81,26 +81,26 @@ fi
 function compress_file() {
   local archive_type="$1"
   case "${archive_type}" in
-    7z|tar|jar|xz|zip|zstd|gzip|bzip2|lzop|lz4|pigz)
-      alias "compress_${archive_type}" "${archive_type} -cvf"
-      ;;
-    *)
-      echo "Unsupported archive type: ${archive_type}"
-      return 1
-      ;;
+  7z | tar | jar | xz | zip | zstd | gzip | bzip2 | lzop | lz4 | pigz)
+    alias "compress_${archive_type}" "${archive_type} -cvf"
+    ;;
+  *)
+    echo "Unsupported archive type: ${archive_type}"
+    return 1
+    ;;
   esac
 }
 
 function extract_file() {
   local archive_type="$1"
   case "${archive_type}" in
-    7z|tar|jar|xz|zip|zstd|gzip|bzip2|lzop|lz4|pigz)
-      alias "extract_${archive_type}" "${archive_type} -xvf"
-      ;;
-    *)
-      echo "Unsupported archive type: ${archive_type}"
-      return 1
-      ;;
+  7z | tar | jar | xz | zip | zstd | gzip | bzip2 | lzop | lz4 | pigz)
+    alias "extract_${archive_type}" "${archive_type} -xvf"
+    ;;
+  *)
+    echo "Unsupported archive type: ${archive_type}"
+    return 1
+    ;;
   esac
 }
 
@@ -108,26 +108,26 @@ function extract_file() {
 function compress_large_file() {
   local archive_type="$1"
   case "${archive_type}" in
-    7z|tar|jar|xz|zip|zstd|gzip|bzip2|lzop|lz4|pigz)
-      alias "compress_${archive_type}" "${archive_type} -cvf -"
-      ;;
-    *)
-      echo "Unsupported archive type: ${archive_type}"
-      return 1
-      ;;
+  7z | tar | jar | xz | zip | zstd | gzip | bzip2 | lzop | lz4 | pigz)
+    alias "compress_${archive_type}" "${archive_type} -cvf -"
+    ;;
+  *)
+    echo "Unsupported archive type: ${archive_type}"
+    return 1
+    ;;
   esac
 }
 
 function extract_large_file() {
   local archive_type="$1"
   case "${archive_type}" in
-    7z|tar|jar|xz|zip|zstd|gzip|bzip2|lzop|lz4|pigz)
-      alias "extract_${archive_type}" "${archive_type} -xvf -"
-      ;;
-    *)
-      echo "Unsupported archive type: ${archive_type}"
-      return 1
-      ;;
+  7z | tar | jar | xz | zip | zstd | gzip | bzip2 | lzop | lz4 | pigz)
+    alias "extract_${archive_type}" "${archive_type} -xvf -"
+    ;;
+  *)
+    echo "Unsupported archive type: ${archive_type}"
+    return 1
+    ;;
   esac
 }
 

@@ -62,12 +62,12 @@ PICS_DIR="${HOME}/Pictures"
 VIDS_DIR="${HOME}/Videos"
 
 # Define functions for each alias with checks and optional ls
-alias app='change_directory "$APP_DIR" true' # Applications
-alias cod='change_directory "$CODE_DIR" true' # Code
-alias des='change_directory "$DESK_DIR" true' # Desktop
-alias doc='change_directory "$DOCS_DIR" true' # Documents
-alias dot='change_directory "$DOTF_DIR" true' # Dotfiles
-alias dow='change_directory "$DOWN_DIR" true' # Downloads
+alias app='change_directory "$APP_DIR" true'   # Applications
+alias cod='change_directory "$CODE_DIR" true'  # Code
+alias des='change_directory "$DESK_DIR" true'  # Desktop
+alias doc='change_directory "$DOCS_DIR" true'  # Documents
+alias dot='change_directory "$DOTF_DIR" true'  # Dotfiles
+alias dow='change_directory "$DOWN_DIR" true'  # Downloads
 alias mus='change_directory "$MUSIC_DIR" true' # Music
-alias pic='change_directory "$PICS_DIR" true' # Pictures
-alias vid='change_directory "$VIDS_DIR" true' # Videos
+alias pic='change_directory "$PICS_DIR" true'  # Pictures
+alias vid='change_directory "$VIDS_DIR" true'  # Videos
