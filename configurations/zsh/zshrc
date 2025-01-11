@@ -1,84 +1,110 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
+#!/usr/bin/env zsh
+
+# Performance profiling (uncomment to debug startup time)
+# zmodload zsh/zprof
+
+# Enable Powerlevel10k instant prompt
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# .zshrc - Simplified Zsh configuration
+# Source constants and core configuration
+source "${HOME}/.dotfiles/lib/constants.sh"
 
-
-  if type brew &>/dev/null; then
-    FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
-
-    autoload -Uz compinit
-    compinit
-  fi
-
-# Set environment variables
-export DOTFILES="$HOME/.dotfiles/lib"
-export PYENV_ROOT="$HOME/.pyenv"
-export PNPM_HOME="$HOME/Library/pnpm"
-export PATH="$PYENV_ROOT/bin:$PNPM_HOME:/opt/homebrew/opt/openssl@1.1/bin:/opt/homebrew/opt/flex/bin:/opt/homebrew/opt/bison/bin:/opt/homebrew/opt/libpcap/bin:$PATH"
-
-# Load dotfiles (if directory exists)
-if [[ -d "$DOTFILES" ]]; then
-  for loader in "$DOTFILES"/*.sh; do
-    source "$loader"
-  done
+# Initialize completion system
+autoload -Uz compinit
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
 fi
 
-# Zsh configuration settings
-typeset -aU path
-autoload -Uz compinit && compinit     # Initialize completion system
-autoload -Uz colors && colors         # Enable color support
-unsetopt correct_all                  # Disable autocorrect to avoid delays
+# Load core modules
+source_if_exists() {
+  [[ -f "$1" ]] && source "$1"
+}
 
-# Initialize pyenv
-if command -v pyenv >/dev/null 2>&1; then
+# Load configuration modules
+for config in "${DOTFILES_CONFIG}/zsh/conf.d"/*.zsh; do
+  source_if_exists "$config"
+done
+
+# Initialize Homebrew if available
+if (( $+commands[brew] )); then
+  FPATH="$(brew --prefix)/share/zsh-completions:$FPATH"
+  source_if_exists "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  source_if_exists "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
+
+# Load custom functions and aliases
+for script in "${DOTFILES_LIB}"/functions/*.sh; do
+  source_if_exists "$script"
+done
+
+for category in "${DOTFILES_DIR}"/aliases/*; do
+  if [[ -d "$category" ]]; then
+    for alias_file in "$category"/*.sh; do
+      if [[ -f "$alias_file" ]]; then
+        source "$alias_file"
+      fi
+    done
+  fi
+done
+
+# Initialize development environments
+# Python - pyenv
+if (( $+commands[pyenv] )); then
   eval "$(pyenv init -)"
 fi
 
+# Node.js - nvm
+export NVM_DIR="$HOME/.nvm"
+source_if_exists "$NVM_DIR/nvm.sh"
+source_if_exists "$NVM_DIR/bash_completion"
+
+# Ruby - rbenv
+if (( $+commands[rbenv] )); then
+  eval "$(rbenv init -)"
+fi
+
+# FZF configuration
+if (( $+commands[fzf] )); then
+  source_if_exists "$(brew --prefix)/opt/fzf/shell/completion.zsh"
+  source_if_exists "$(brew --prefix)/opt/fzf/shell/key-bindings.zsh"
+fi
+
 # Load Powerlevel10k theme
-if [[ -f /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme ]]; then
-  source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
-fi
-[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+source_if_exists "/opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme"
+source_if_exists "${HOME}/.p10k.zsh"
 
-# Fuzzy finder - fzf
-if command -v fzf >/dev/null 2>&1; then
-  source "$(brew --prefix)/opt/fzf/shell/completion.zsh"
-  source "$(brew --prefix)/opt/fzf/shell/key-bindings.zsh"
-fi
+# Set ZSH options
+setopt AUTO_CD              # Change directory without cd
+setopt AUTO_PUSHD          # Push directory to stack
+setopt PUSHD_IGNORE_DUPS   # Don't push duplicate directories
+setopt EXTENDED_GLOB       # Extended globbing
+setopt INTERACTIVE_COMMENTS # Allow comments in interactive shell
+setopt NO_CASE_GLOB        # Case insensitive globbing
+setopt NUMERIC_GLOB_SORT   # Sort numerically
+setopt NO_BEEP             # No beep on error
 
-# Load custom completions
-[[ -f ~/.zsh_completions ]] && source ~/.zsh_completions
+# History configuration
+HISTFILE="${HOME}/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=10000
+setopt EXTENDED_HISTORY
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_VERIFY
+setopt SHARE_HISTORY
 
-# Homebrew command-not-found handler
-HB_CNF_HANDLER="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
-[[ -f "$HB_CNF_HANDLER" ]] && source "$HB_CNF_HANDLER"
+# Key bindings
+bindkey -e  # Use emacs key bindings
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
 
-# Aliases
-alias zshconfig="micro ~/.zshrc"
-alias ohmyzsh="micro ~/.oh-my-zsh"
+# Load custom PATH configurations
+source "${DOTFILES_DIR}/paths.sh"
 
-# Enable 'thefuck' to trigger on pressing Esc twice
-autoload -U expand-or-complete
-zle -N trigger_thefuck
-bindkey -M emacs '\e\e' trigger_thefuck
-bindkey -M viins '\e\e' trigger_thefuck
-trigger_thefuck() {
-  BUFFER="fuck"
-  zle accept-line
-}
-
-# Load PNPM (for Zsh only)
-if [[ "$SHELL" == "/bin/zsh" ]]; then
-  export PATH="$PNPM_HOME:$PATH"
-fi
-
-# Display system info using fastfetch
-if command -v fastfetch >/dev/null 2>&1; then
-  fastfetch
-fi
-
+# Performance profiling end (uncomment with zprof at top)
+# zprof
