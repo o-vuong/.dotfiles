@@ -37,6 +37,10 @@ for loaders in "${DOTFILES}"/*.sh; do
   . "${loaders}"
 done
 
+# Source Powerlevel10k theme if installed via Homebrew
+  source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
+
+
 # Remove duplicates in zsh $PATH
 # shellcheck disable=SC2034
 typeset -aU path
