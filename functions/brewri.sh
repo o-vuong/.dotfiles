@@ -1,3 +1,5 @@
+#!/bin/bash
+
 brewri() {
     local source_folder="/Volumes/LaCie/Applications"
     local destination_folder="/Applications"

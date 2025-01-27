@@ -1,55 +1,85 @@
-#!/usr/bin/env bash
-# 🅳🅾🆃🅵🅸🅻🅴🆂 (v0.2.468) - <https://dotfiles.io>
-# Made with ♥ in London, UK by @sebastienrousseau
-# Copyright (c) 2015-2024. All rights reserved
-# License: MIT
+# -----------------------
+# Powerlevel10k Instant Prompt
+# -----------------------
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
-## 🆅🅰🆁🅸🅰🅱🅻🅴🆂 - Set Dotfiles variable.
-HOSTNAME=$(hostname -f)                 # hostname of the machine.
-INPUTRC=${HOME}/.inputrc                # set INPUTRC (so that .inputrc is respected)
-OS_ARCH=$(uname -m)                     # machine hardware name.
-OS_NAME=$(uname)                        # operating system name.
-OS_VERSION=$(uname -r)                  # operating system version number.
-SSL_CERT_FILE="/Users/oscar/.dotfiles/configurations/curl/cacert.pem"       # set the SSL_CERT_FILE environment variable.
-USER_LANGUAGE="en_GB.UTF-8"             # default language.
-# USER=$(whoami)                        # current user name.
+# -----------------------
+# Antidote Initialization
+# -----------------------
+# Source Antidote (installed via Homebrew)
+source /opt/homebrew/share/antidote/antidote.zsh
 
-## 🅴🆇🅿🅾🆁🆃🆂 - Export the variables.
-export ARCHFLAGS="-arch ${OS_ARCH}"     # archflags for the current machine.
-export DOTFILES_VERSION='0.2.468'       # version of the dotfiles.
-export DOTFILES="${HOME}"/.dotfiles/ # path to the cross plaform dotfiles.
-export HOSTNAME=${HOSTNAME}             # hostname of the machine.
-export INPUTRC=${INPUTRC}               # set INPUTRC (so that .inputrc is respected)
-export LANG=${USER_LANGUAGE}            # default language.
-export LANGUAGE=${USER_LANGUAGE}        # default language.
-export LC_ALL=${USER_LANGUAGE}          # default language.
-export LC_CTYPE=${USER_LANGUAGE}        # default language.
-export OS_ARCH                          # machine hardware name.
-export OS_NAME                          # operating system name.
-export OS_VERSION                       # operating system version number.
-export SSL_CERT_FILE=${SSL_CERT_FILE}   # set the SSL_CERT_FILE environment variable.
-export TERM=xterm-256color              # default terminal color.
-# export USER                             # current user name.
+# Load plugins and themes from .zsh_plugins.txt
+antidote load < ~/.zsh_plugins.txt
 
-## 🅻🅾🅰🅳🅴🆁🆂 - Load the dotfiles.
-for loaders in "${DOTFILES}"/*.sh; do
-  # shellcheck source=/dev/null
-  . "${loaders}"
-done
+# -----------------------
+# Loader for Dotfiles
+# -----------------------
+# Load custom .sh files from ${DOTFILES}
+DOTFILES="${HOME}/.dotfiles"
+if [[ -d "${DOTFILES}" ]]; then
+  for loaders in "${DOTFILES}"/*.sh; do
+    echo "Loading: $loaders"
+    source "$loaders"
+  done
+else
+  echo "Warning: ${DOTFILES} directory not found."
+fi
 
-# Source Powerlevel10k theme if installed via Homebrew
-  source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
+# -----------------------
+# Powerlevel10k Configuration
+# -----------------------
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+# -----------------------
+# Environment Variables
+# -----------------------
+export LANG="en_GB.UTF-8"
+export LC_ALL="en_GB.UTF-8"
+export SSL_CERT_FILE="$HOME/.dotfiles/configurations/curl/cacert.pem"
+export PNPM_HOME="/opt/homebrew/Cellar/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
 
-# Remove duplicates in zsh $PATH
-# shellcheck disable=SC2034
-typeset -aU path
+# -----------------------
+# History Settings
+# -----------------------
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_REDUCE_BLANKS
 
-# Initialize the completion system
-autoload -Uz compinit
+# -----------------------
+# Directory Navigation
+# -----------------------
+setopt AUTO_CD
+setopt AUTO_PUSHD
+setopt PUSHD_IGNORE_DUPS
+setopt PUSHD_SILENT
 
-# Enable colors in prompt
-autoload -Uz colors && colors
+# -----------------------
+# Key Bindings
+# -----------------------
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
+bindkey "^[[H" beginning-of-line
+bindkey "^[[F" end-of-line
+bindkey "^[[3~" delete-char
 
-# Starting to find autocorrect rather annoying...
-unsetopt correct_all
+# -----------------------
+# Fastfetch (Optional)
+# -----------------------
+fastfetch --logo kali --logo-width 25
+
+# -----------------------
+# NVM Setup
+# -----------------------
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
