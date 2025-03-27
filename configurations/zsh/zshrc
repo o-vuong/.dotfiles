@@ -1,85 +1,54 @@
-# -----------------------
-# Powerlevel10k Instant Prompt
-# -----------------------
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# -----------------------
-# Antidote Initialization
-# -----------------------
-# Source Antidote (installed via Homebrew)
-source /opt/homebrew/share/antidote/antidote.zsh
+# 🅳🅾🆃🅵🅸🅻🅴🆂 (v0.2.467) - <https://dotfiles.io>
+# Made with ♥ in London, UK by @sebastienrousseau
+# Copyright (c) 2015-2023. All rights reserved
+# License: MIT
 
-# Load plugins and themes from .zsh_plugins.txt
-antidote load < ~/.zsh_plugins.txt
+# Variables
+HOSTNAME=$(hostname -f)                 # Hostname of the machine
+INPUTRC=${HOME}/.inputrc                # Set INPUTRC
+OS_ARCH=$(uname -m)                     # Machine hardware name
+OS_NAME=$(uname)                        # Operating system name
+OS_VERSION=$(uname -r)                  # Operating system version number
+SSL_CERT_FILE=${HOME}/cacert.pem        # SSL certificate file
+USER_LANGUAGE="en_GB.UTF-8"             # Default language
 
-# -----------------------
-# Loader for Dotfiles
-# -----------------------
-# Load custom .sh files from ${DOTFILES}
-DOTFILES="${HOME}/.dotfiles"
-if [[ -d "${DOTFILES}" ]]; then
-  for loaders in "${DOTFILES}"/*.sh; do
-    echo "Loading: $loaders"
-    source "$loaders"
-  done
-else
-  echo "Warning: ${DOTFILES} directory not found."
-fi
+# Export Variables
+export ARCHFLAGS="-arch ${OS_ARCH}"     # Archflags for the current machine
+export DOTFILES_VERSION='0.2.467'       # Version of the dotfiles
+export DOTFILES="${HOME}/.dotfiles"    # Path to the cross-platform dotfiles
+export HOSTNAME                         # Hostname of the machine
+export INPUTRC                          # Set INPUTRC
+export LANG=${USER_LANGUAGE}            # Default language
+export LANGUAGE=${USER_LANGUAGE}        # Default language
+export LC_ALL=${USER_LANGUAGE}          # Default language
+export LC_CTYPE=${USER_LANGUAGE}        # Default language
+export OS_ARCH                          # Machine hardware name
+export OS_NAME                          # Operating system name
+export OS_VERSION                       # Operating system version number
+export SSL_CERT_FILE                    # SSL certificate file
+export TERM=xterm-256color              # Default terminal color
 
-# -----------------------
-# Powerlevel10k Configuration
-# -----------------------
+# Load Dotfiles
+for loaders in "${DOTFILES}"/*.sh; do
+  echo "Loading ${loaders}"
+  . "${loaders}"
+done
+
+# Zsh Configuration
+typeset -aU path                        # Remove duplicates in zsh $PATH
+autoload -Uz compinit                   # Initialize the completion system
+autoload -Uz colors && colors           # Enable colors in prompt
+unsetopt correct_all                    # Disable autocorrect
+
+# Powerlevel10k Theme
+source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# -----------------------
-# Environment Variables
-# -----------------------
-export LANG="en_GB.UTF-8"
-export LC_ALL="en_GB.UTF-8"
-export SSL_CERT_FILE="$HOME/.dotfiles/configurations/curl/cacert.pem"
-export PNPM_HOME="/opt/homebrew/Cellar/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
 
-# -----------------------
-# History Settings
-# -----------------------
-HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
-setopt SHARE_HISTORY
-setopt HIST_IGNORE_ALL_DUPS
-setopt HIST_REDUCE_BLANKS
-
-# -----------------------
-# Directory Navigation
-# -----------------------
-setopt AUTO_CD
-setopt AUTO_PUSHD
-setopt PUSHD_IGNORE_DUPS
-setopt PUSHD_SILENT
-
-# -----------------------
-# Key Bindings
-# -----------------------
-bindkey "^[[1;5C" forward-word
-bindkey "^[[1;5D" backward-word
-bindkey "^[[H" beginning-of-line
-bindkey "^[[F" end-of-line
-bindkey "^[[3~" delete-char
-
-# -----------------------
-# Fastfetch (Optional)
-# -----------------------
-fastfetch --logo kali --logo-width 25
-
-# -----------------------
-# NVM Setup
-# -----------------------
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+# Custom PATH
+export PATH="/Volumes/Macintosh HD 1/Users/libragroup/.codeium/windsurf/bin:$PATH"

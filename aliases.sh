@@ -25,7 +25,7 @@
 #   Bash Unalias Documentation: https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#Bash-Builtins
 
 remove_all_aliases() {
-  unalias -a # Remove all previous environment defined aliases.
+	unalias -a # Remove all previous environment defined aliases.
 }
 
 # Function: load_custom_aliases
@@ -40,10 +40,18 @@ remove_all_aliases() {
 #   ShellCheck Documentation: https://github.com/koalaman/shellcheck
 
 load_custom_aliases() {
-  for file in "${HOME}"/.dotfiles/aliases/[!.#]*/*.sh; do
-    # shellcheck source=/dev/null
-    source "${file}"
-  done
+	local dir="${HOME}/.dotfiles/aliases"
+	if [[ ! -d ${dir} ]]; then
+		echo "Warning: Aliases directory not found at ${dir}"
+		return 1
+	fi
+
+	for file in "${dir}"/[!.#]*/*.sh; do
+		if [[ -f ${file} ]]; then
+			# shellcheck source=/dev/null
+			source "${file}" || echo "Warning: Failed to source ${file}"
+		fi
+	done
 }
 
 remove_all_aliases

@@ -1,0 +1,21 @@
+{
+    "tabsize": false,
+    "hardtab": false,
+    "autoindent": false,
+    "softwrap": false,
+    "autosave": false,
+    "cursorline": false,
+    "ruler": false,
+    "highlightcurrentline": false,
+    "showtabs": false,
+    "showwhitespaces": false,
+    "colorcolumns": false,
+    "clipboard": false,
+    "statusformat": false,
+    "backup": false,
+    "mouse": false,
+    "scrollbar": false,
+    "relativenumbers": false,
+    "tabstospaces": false,
+    "colorscheme": false
+}

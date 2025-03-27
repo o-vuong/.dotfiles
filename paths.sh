@@ -24,9 +24,17 @@
 #   ShellCheck Documentation: https://github.com/koalaman/shellcheck
 
 load_custom_paths() {
-  for config in "${HOME}"/.dotfiles/paths/[!.#]*/*.sh; do
-    # shellcheck source=/dev/null
-    source "${config}"
+  local dir="${HOME}/.dotfiles/paths"
+  if [[ ! -d "${dir}" ]]; then
+    echo "Warning: Paths directory not found at ${dir}"
+    return 1
+  fi
+
+  for config in "${dir}"/[!.#]*/*.sh; do
+    if [[ -f "${config}" ]]; then
+      # shellcheck source=/dev/null
+      source "${config}" || echo "Warning: Failed to source ${config}"
+    fi
   done
 }
 

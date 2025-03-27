@@ -24,10 +24,28 @@
 #   ShellCheck Documentation: https://github.com/koalaman/shellcheck
 
 load_custom_configurations() {
-  for config in "${HOME}"/.dotfiles/configurations/[!.#]*/*.sh; do
-    # shellcheck source=/dev/null
-    source "${config}"
-  done
+  local dir="${HOME}/.dotfiles/configurations"
+  
+  # Function to recursively source files
+  source_files() {
+    local current_dir="$1"
+    local file
+    
+    # Loop through all files and directories
+    for file in "${current_dir}"/*; do
+      if [[ -f "${file}" ]] && [[ "${file}" =~ \.sh$ ]] && [[ ! "${file}" =~ [.#] ]]; then
+        # Source .sh files that don't start with . or #
+        # shellcheck source=/dev/null
+        source "${file}"
+      elif [[ -d "${file}" ]]; then
+        # Recursively process subdirectories
+        source_files "${file}"
+      fi
+    done
+  }
+
+  # Start recursive sourcing from configurations directory
+  source_files "${dir}"
 }
 
 load_custom_configurations

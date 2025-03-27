@@ -23,9 +23,17 @@
 #   ShellCheck Documentation: https://github.com/koalaman/shellcheck
 
 load_custom_functions() {
-  for function in "${HOME}"/.dotfiles/functions/[!.#]*.sh; do
-    # shellcheck source=/dev/null
-    source "${function}"
+  local dir="${HOME}/.dotfiles/functions"
+  if [[ ! -d "${dir}" ]]; then
+    echo "Warning: Functions directory not found at ${dir}"
+    return 1
+  fi
+
+  for function in "${dir}"/[!.#]*.sh; do
+    if [[ -f "${function}" ]]; then
+      # shellcheck source=/dev/null
+      source "${function}" || echo "Warning: Failed to source ${function}"
+    fi
   done
 }
 
